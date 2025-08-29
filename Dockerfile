@@ -19,11 +19,14 @@ WORKDIR /var/www/html
 # 4️⃣ Copy application files
 COPY . /var/www/html
 
-# 5️⃣ Copy Nginx config
-COPY default.conf /etc/nginx/conf.d/default.conf
-
 # 6️⃣ Permissions for the web user
 RUN chown -R www-data:www-data /var/www/html
+
+# Remove default config
+RUN rm /etc/nginx/conf.d/default.conf
+
+# 5️⃣ Copy Nginx config
+COPY default.conf /etc/nginx/conf.d/default.conf
 
 # 7️⃣ Expose HTTP port
 EXPOSE 80

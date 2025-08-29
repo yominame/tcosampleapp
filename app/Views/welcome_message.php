@@ -229,7 +229,7 @@
 
         <h2>The small framework with powerful features</h2>
 
-        <h3>! Good Job Yogesh, Proud of You !</h3>
+        <h3>! Running v1 !</h3>
 
     </div>
 

@@ -22,9 +22,6 @@ COPY . /var/www/html
 # 6️⃣ Permissions for the web user
 RUN chown -R www-data:www-data /var/www/html
 
-# Remove default config
-RUN rm /etc/nginx/conf.d/default.conf
-
 # 5️⃣ Copy Nginx config
 COPY default.conf /etc/nginx/conf.d/default.conf
 

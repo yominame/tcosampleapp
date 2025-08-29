@@ -35,4 +35,4 @@ jobs:
 
           docker build . -t "$IMAGE_BRANCH" -t "$IMAGE_SHORT_SHA"
           docker push "$IMAGE_BRANCH"
-          docker push "$IMAGE_SHORT_SHA"
+          #docker push "$IMAGE_SHORT_SHA"

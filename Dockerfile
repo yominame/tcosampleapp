@@ -1,10 +1,36 @@
-# Use the official Nginx image as the base
-FROM nginx:alpine
+# 1️⃣ Base image with PHP-FPM
+FROM php:8.2-fpm
 
-# Copy custom index page to the default nginx html directory
-COPY index.html /usr/share/nginx/html/index.html
+# 2️⃣ Install system packages + PHP extensions
+RUN apt-get update && apt-get install -y \
+    nginx \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libwebp-dev \
+    libxpm-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-install gd pdo pdo_mysql \
+    && rm -rf /var/lib/apt/lists/*
 
-# Expose port 80 for HTTP
+# 3️⃣ Set working directory
+WORKDIR /var/www/html
+
+# 4️⃣ Copy application files
+COPY . /var/www/html
+
+# 5️⃣ Copy Nginx config
+COPY default.conf /etc/nginx/conf.d/default.conf
+
+# 6️⃣ Permissions for the web user
+RUN chown -R www-data:www-data /var/www/html
+
+# 7️⃣ Expose HTTP port
 EXPOSE 80
 
-# Nginx starts automatically from the base image's CMD
+# 8️⃣ Startup script
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
+# 9️⃣ Run both services (Nginx in foreground)
+CMD ["/start.sh"]

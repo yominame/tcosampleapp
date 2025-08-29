@@ -1,0 +1,38 @@
+name: Build and Deploy to Azure App Service (Docker Hub)
+
+on:
+  push:
+    branches:
+      - "**" # Trigger on push to any branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Build and push image to Docker Hub
+        run: |
+          # Extract the branch name (strip 'refs/heads/')
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          # Make it safe for Docker tags
+          SAFE_BRANCH_NAME=$(echo "$BRANCH_NAME" | tr '/' '-')
+
+          # Short SHA (first 7 chars)
+          SHORT_SHA=$(echo "$GITHUB_SHA" | cut -c1-7)
+
+          # Image tags
+          IMAGE_BRANCH=${{ secrets.DOCKERHUB_USERNAME }}/tcosampleapp:${SAFE_BRANCH_NAME}
+          IMAGE_SHORT_SHA=${{ secrets.DOCKERHUB_USERNAME }}/tcosampleapp:${SAFE_BRANCH_NAME}-${SHORT_SHA}
+
+          echo "Building and tagging:"
+          echo " - $IMAGE_BRANCH"
+          echo " - $IMAGE_SHORT_SHA"
+
+          docker build . -t "$IMAGE_BRANCH" -t "$IMAGE_SHORT_SHA"
+          docker push "$IMAGE_BRANCH"
+          docker push "$IMAGE_SHORT_SHA"

@@ -7,7 +7,7 @@ class KeyvaultTest extends BaseController
     public function index()
     {
         // Read the secret from environment variable
-        $secret = env('database-password');
+        $secret = env('database.password');
 
         // Pass it to the view
         return view('keyvault_view', ['secret' => $secret]);
